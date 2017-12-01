@@ -51,40 +51,6 @@
       </form>
     </div>
 
-    {{-- display stored tasks --}}
-    @if (count($storedTasks) > 0)
-      <table class="table">
-        <thead>
-          <th>Task #</th>
-          <th>Name</th>
-          <th>Edit</th>
-          <th>Delete</th>
-        </thead>
-
-        <tbody>
-          @foreach ($storedTasks as $storedTask)
-            <tr>
-              <th>{{ $storedTask->id }}</th>
-              <td>{{ $storedTask->name }}</td>
-              <td><a href="{{ route('tasks.edit', ['tasks'=>$storedTask->id]) }}" class='btn btn-default'>Edit</a></td>
-              <td>
-                <form action="{{ route('tasks.destroy', ['tasks'=>$storedTask->id]) }}" method='POST'>
-                  {{ csrf_field() }}
-                  <input type="hidden" name='_method' value='DELETE'>
-
-                  <input type="submit" class='btn btn-danger' value='Delete'>
-                </form>
-              </td>
-            </tr>
-          @endforeach
-        </tbody>
-      </table>
-    @endif
-
-    <div class="row text-center">
-      {{ $storedTasks->links() }}
-    </div>
-
   </div>
 </div>
 </body>

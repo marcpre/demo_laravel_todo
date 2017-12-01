@@ -35,7 +35,15 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        
+        $this->validate($request, [
+            'newTaskName' => 'required|min:3|max:190',
+        ]);
+        
+        $task = new Task;
+        $task->name = $request->newTaskName;
+        $task->save();
+        return redirect()->route('tasks.index');
     }
 
     /**
