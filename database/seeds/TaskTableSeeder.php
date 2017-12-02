@@ -13,11 +13,14 @@ class TaskTableSeeder extends Seeder
     {
         $faker = Faker\Factory::create();
         $limit = 25;
+
+        $userIds = DB::table('users')->pluck('id')->toArray();    
         
-        for( $i = 0; $i<$limit; $i++ ) {
-                    DB::table('tasks')->insert([
-                        'name' => $faker->sentence(),
-                    ]);
+        for ($i = 0; $i < $limit; $i++) {
+            DB::table('tasks')->insert([
+                'name' => $faker->sentence(),
+                'user_id' => $faker->randomElement($userIds),
+            ]);
         }
     }
 }

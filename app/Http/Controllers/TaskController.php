@@ -26,9 +26,13 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $tasks = Task::orderBy('id', 'desc')->paginate(7);
+        $result = Auth::user()->task()->orderBy('id', 'desc')->paginate(7);
+        if(!$result->isEmpty()){
+            return view('tasks.index')->with('storedTasks', $tasks);
+        }
+        //$tasks = Task::orderBy('id', 'desc')->paginate(7);
         
-        return view('tasks.index')->with('storedTasks', $tasks);
+        //return view('tasks.index')->with('storedTasks', $tasks);
     }
 
     /**
