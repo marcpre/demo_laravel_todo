@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Task;
 use Illuminate\Http\Request;
+use Session;
 
 class TaskController extends Controller
 {
@@ -14,7 +15,9 @@ class TaskController extends Controller
      */
     public function index()
     {
-        return view('tasks.index');
+        $tasks = Task::orderBy('id', 'desc')->get();
+        
+        return view('tasks.index')->with('storedTasks', $tasks);
     }
 
     /**
@@ -43,6 +46,8 @@ class TaskController extends Controller
         $task = new Task;
         $task->name = $request->newTaskName;
         $task->save();
+        Session::flash('success', 'New task #' . $task->id . ' has been successfully added.');
+        
         return redirect()->route('tasks.index');
     }
 
@@ -65,7 +70,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        //
+        return view('tasks.edit')->with('taskUnderEdit', $task);;
     }
 
     /**
@@ -77,7 +82,15 @@ class TaskController extends Controller
      */
     public function update(Request $request, Task $task)
     {
-        //
+        $this->validate($request, [
+            'updatedTaskName' => 'required|min:3|max:190',
+        ]);
+        
+        $task->name = $request->updatedTaskName;
+        $task->save();
+        Session::flash('success', 'New task #' . $task->id . ' has been successfully updated.');
+        
+        return redirect()->route('tasks.index');
     }
 
     /**
@@ -88,6 +101,7 @@ class TaskController extends Controller
      */
     public function destroy(Task $task)
     {
-        //
+        $task->delete();
+        return redirect()->route('tasks.index');
     }
 }
