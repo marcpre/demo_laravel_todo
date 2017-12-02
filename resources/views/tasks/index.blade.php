@@ -81,6 +81,10 @@
       </table>
     @endif
 
+    <div class="row text-center">
+    {{ $storedTasks->links() }}
+  </div>
+
 
   </div>
 </div>
