@@ -3,12 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Task;
+use Debugbar;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Session;
 
 class TaskController extends Controller
 {
-    
+
     /**
      * Create a new controller instance.
      *
@@ -18,7 +20,7 @@ class TaskController extends Controller
     {
         $this->middleware('auth');
     }
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -26,13 +28,10 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $result = Auth::user()->task()->orderBy('id', 'desc')->paginate(7);
-        if(!$result->isEmpty()){
-            return view('tasks.index')->with('storedTasks', $tasks);
-        }
-        //$tasks = Task::orderBy('id', 'desc')->paginate(7);
-        
-        //return view('tasks.index')->with('storedTasks', $tasks);
+        $tasks = Auth::user()->task()->orderBy('id', 'desc')->paginate(7);
+        return view('tasks.index')->with('storedTasks', $tasks);
+        // $tasks = Task::orderBy('id', 'desc')->paginate(7);
+        // return view('tasks.index')->with('storedTasks', $tasks);
     }
 
     /**
@@ -53,16 +52,18 @@ class TaskController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $this->validate($request, [
             'newTaskName' => 'required|min:3|max:190',
         ]);
-        
+
         $task = new Task;
         $task->name = $request->newTaskName;
+        $task->user_id = \Auth::id();
+        // Auth::user()->task()->create($request);//->except('_token'));
         $task->save();
-        Session::flash('success', 'New task #' . $task->id . ' has been successfully added.');
-        
+        Session::flash('success', 'New task has been successfully added.');
+
         return redirect()->route('tasks.index');
     }
 
@@ -85,7 +86,7 @@ class TaskController extends Controller
      */
     public function edit(Task $task)
     {
-        return view('tasks.edit')->with('taskUnderEdit', $task);;
+        return view('tasks.edit')->with('taskUnderEdit', $task);
     }
 
     /**
@@ -100,11 +101,12 @@ class TaskController extends Controller
         $this->validate($request, [
             'updatedTaskName' => 'required|min:3|max:190',
         ]);
-        
+
         $task->name = $request->updatedTaskName;
+        $task->user_id = \Auth::id();        
         $task->save();
         Session::flash('success', 'Task #' . $task->id . ' has been successfully updated.');
-        
+
         return redirect()->route('tasks.index');
     }
 
@@ -117,9 +119,9 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
-        
+
         Session::flash('success', 'Task #' . $task->id . ' has been successfully deleted.');
-        
+
         return redirect()->route('tasks.index');
     }
 }
