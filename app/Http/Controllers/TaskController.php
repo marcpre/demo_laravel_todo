@@ -88,7 +88,7 @@ class TaskController extends Controller
         
         $task->name = $request->updatedTaskName;
         $task->save();
-        Session::flash('success', 'New task #' . $task->id . ' has been successfully updated.');
+        Session::flash('success', 'Task #' . $task->id . ' has been successfully updated.');
         
         return redirect()->route('tasks.index');
     }
@@ -102,6 +102,9 @@ class TaskController extends Controller
     public function destroy(Task $task)
     {
         $task->delete();
+        
+        Session::flash('success', 'Task #' . $task->id . ' has been successfully deleted.');
+        
         return redirect()->route('tasks.index');
     }
 }
